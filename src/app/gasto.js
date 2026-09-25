@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ScrollView, Text, TextInput, Pressable, Alert, StyleSheet } from "react-native";
+import { ScrollView, View, Text, TextInput, Pressable, Alert, StyleSheet } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import CampoMonto from "../components/CampoMonto";
 import SelectorCategoria from "../components/SelectorCategoria";
@@ -16,6 +16,10 @@ export default function GastoScreen() {
   const gasto = datos.gastos.find((g) => g.id === id);
   const esEdicion = gasto !== undefined;
 
+  // ¿Es el pago de una deuda? Entonces no se elige categoría (siempre es "Deudas")
+  const esPago = esEdicion && Boolean(gasto.deudaId);
+  const deudaDelPago = esPago ? datos.deudas.find((d) => d.id === gasto.deudaId) : undefined;
+
   // "Deudas" no se elige a mano: la usa la app para los pagos de deudas
   const categorias = datos.categorias.filter((c) => !c.delSistema);
 
@@ -24,6 +28,8 @@ export default function GastoScreen() {
   const [fecha, setFecha] = useState(esEdicion ? gasto.fecha : hoy());
   const [descripcion, setDescripcion] = useState(esEdicion ? gasto.descripcion : "");
   const [error, setError] = useState("");
+
+  const palabra = esPago ? "pago" : "gasto";
 
   function guardar() {
     const numero = leerMonto(monto);
@@ -46,7 +52,7 @@ export default function GastoScreen() {
   }
 
   function confirmarBorrado() {
-    Alert.alert("¿Borrar este gasto?", "No se puede deshacer.", [
+    Alert.alert(`¿Borrar este ${palabra}?`, "No se puede deshacer.", [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Borrar",
@@ -65,13 +71,24 @@ export default function GastoScreen() {
       keyboardShouldPersistTaps="handled"
       automaticallyAdjustKeyboardInsets
     >
-      <Text style={styles.titulo}>{esEdicion ? "Editar gasto" : "Nuevo gasto"}</Text>
+      <Text style={styles.titulo}>{esEdicion ? `Editar ${palabra}` : "Nuevo gasto"}</Text>
 
       <Text style={styles.etiqueta}>Monto</Text>
       <CampoMonto valor={monto} alCambiar={setMonto} autoFocus={!esEdicion} />
 
-      <Text style={styles.etiqueta}>Categoría</Text>
-      <SelectorCategoria categorias={categorias} elegida={categoriaId} alElegir={setCategoriaId} />
+      {esPago ? (
+        <View style={styles.pagoDe}>
+          <Text style={styles.pagoDeTexto}>
+            Pago de <Text style={styles.negrita}>{deudaDelPago ? deudaDelPago.nombre : "una deuda que ya borraste"}</Text>.
+            Si lo cambiás o lo borrás, la deuda se actualiza sola.
+          </Text>
+        </View>
+      ) : (
+        <>
+          <Text style={styles.etiqueta}>Categoría</Text>
+          <SelectorCategoria categorias={categorias} elegida={categoriaId} alElegir={setCategoriaId} />
+        </>
+      )}
 
       <Text style={styles.etiqueta}>Fecha</Text>
       <SelectorFecha fecha={fecha} alCambiar={setFecha} />
@@ -94,7 +111,7 @@ export default function GastoScreen() {
 
       {esEdicion && (
         <Pressable style={styles.botonBorrar} onPress={confirmarBorrado}>
-          <Text style={styles.botonBorrarTexto}>Borrar gasto</Text>
+          <Text style={styles.botonBorrarTexto}>Borrar {palabra}</Text>
         </Pressable>
       )}
     </ScrollView>
@@ -117,6 +134,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colores.textoSuave,
     marginTop: espacio.s,
+  },
+  pagoDe: {
+    backgroundColor: colores.superficie2,
+    borderRadius: radio.s,
+    padding: espacio.m,
+    marginTop: espacio.s,
+  },
+  pagoDeTexto: {
+    fontSize: 14,
+    color: colores.textoSuave,
+  },
+  negrita: {
+    fontWeight: "bold",
+    color: colores.texto,
   },
   input: {
     backgroundColor: colores.superficie2,

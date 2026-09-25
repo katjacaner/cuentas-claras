@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import { colores, radio } from "../constants/tema";
 
 // Botones pegados para elegir UNA opción, por ejemplo "Debo" / "Me deben"
-// opciones: [{ valor: "debo", texto: "Debo" }, ...]
+// opciones: [{ valor: "debo", texto: "Debo", aviso: 2 }, ...]   (aviso es opcional)
 export default function SelectorOpciones({ opciones, elegida, alElegir, deshabilitado = false }) {
   return (
     <View style={[styles.contenedor, deshabilitado && styles.deshabilitado]}>
@@ -16,6 +16,11 @@ export default function SelectorOpciones({ opciones, elegida, alElegir, deshabil
             style={[styles.opcion, activa && styles.opcionActiva]}
           >
             <Text style={[styles.texto, activa && styles.textoActivo]}>{o.texto}</Text>
+            {o.aviso > 0 && (
+              <View style={styles.aviso}>
+                <Text style={styles.avisoTexto}>{o.aviso}</Text>
+              </View>
+            )}
           </Pressable>
         );
       })}
@@ -38,9 +43,12 @@ const styles = StyleSheet.create({
   },
   opcion: {
     flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 6,
     paddingVertical: 10,
     borderRadius: 10,
-    alignItems: "center",
   },
   opcionActiva: {
     backgroundColor: colores.superficie,
@@ -57,5 +65,19 @@ const styles = StyleSheet.create({
   },
   textoActivo: {
     color: colores.texto,
+  },
+  aviso: {
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    paddingHorizontal: 5,
+    backgroundColor: colores.peligro,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avisoTexto: {
+    color: "#FFFFFF",
+    fontSize: 11,
+    fontWeight: "bold",
   },
 });

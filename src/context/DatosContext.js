@@ -59,11 +59,21 @@ export function DatosProvider({ children }) {
     cambiar({ ...datos, deudas, cobros });
   }
 
+    function agregarCobro(cobro) {
+    const nuevo = { id: crearId(), ...cobro };
+    cambiar({ ...datos, cobros: [...datos.cobros, nuevo] });
+  }
+
+  function borrarCobro(id) {
+    const cobros = datos.cobros.filter((c) => c.id !== id);
+    cambiar({ ...datos, cobros });
+  }
+
   // Mientras carga no mostramos nada (dura un instante)
   if (datos === null) return null;
 
   return (
-        <DatosContext.Provider value={{ datos, agregarGasto, editarGasto, borrarGasto, guardarPresupuesto, agregarDeuda, editarDeuda, borrarDeuda }}>
+            <DatosContext.Provider value={{ datos, agregarGasto, editarGasto, borrarGasto, guardarPresupuesto, agregarDeuda, editarDeuda, borrarDeuda, agregarCobro, borrarCobro }}>
       {children}
     </DatosContext.Provider>
   );

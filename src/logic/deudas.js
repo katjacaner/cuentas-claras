@@ -59,9 +59,11 @@ export function textoEstado(deuda, calculo) {
   return `Vence el ${fechaCorta(calculo.vence)}`;
 }
 
-// Cuántas deudas están vencidas o vencen en 7 días o menos (para el globito rojo)
-export function contarUrgentes(datos) {
+// Cuántas deudas están vencidas o vencen en 7 días o menos.
+// Si le pasás un tipo ("debo" o "meDeben"), cuenta solo las de ese tipo.
+export function contarUrgentes(datos, tipo) {
   return datos.deudas.filter((d) => {
+    if (tipo && d.tipo !== tipo) return false;
     const estado = calcularDeuda(d, datos).estado;
     return estado === "vencida" || estado === "pronto";
   }).length;
