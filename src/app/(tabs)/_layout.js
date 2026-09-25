@@ -1,9 +1,10 @@
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { colores } from "../../constants/tema";
 
 export default function TabsLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "#25614F" }}>
+    <Tabs screenOptions={{ tabBarActiveTintColor: colores.acento }}>
       <Tabs.Screen
         name="index"
         options={{
