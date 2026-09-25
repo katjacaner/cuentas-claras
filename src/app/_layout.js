@@ -28,6 +28,7 @@ export default function RootLayout() {
         <Stack.Screen name="gasto" options={modal} />
         <Stack.Screen name="deuda" options={modal} />
           <Stack.Screen name="pago" options={hoja} />
+          <Stack.Screen name="ajustes" options={modal} />
       </Stack>
     </DatosProvider>
   );

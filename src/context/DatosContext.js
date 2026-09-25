@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { cargarDatos, guardarDatos } from "../data/storage";
 import { crearId } from "../utils/id";
+import { COLORES_EXTRA } from "../constants/categorias";
 
 const DatosContext = createContext(null);
 
@@ -19,6 +20,8 @@ export function DatosProvider({ children }) {
     guardarDatos(nuevosDatos);
   }
 
+  // ---------- Gastos ----------
+
   function agregarGasto(gasto) {
     const nuevo = { id: crearId(), deudaId: null, ...gasto };
     cambiar({ ...datos, gastos: [...datos.gastos, nuevo] });
@@ -34,6 +37,8 @@ export function DatosProvider({ children }) {
     cambiar({ ...datos, gastos });
   }
 
+  // ---------- Presupuesto ----------
+
   // Si ya había un presupuesto para ese mes, lo reemplaza
   function guardarPresupuesto(monto, mes) {
     const otros = datos.presupuestos.filter((p) => p.desde !== mes);
@@ -41,7 +46,41 @@ export function DatosProvider({ children }) {
     cambiar({ ...datos, presupuestos });
   }
 
-    function agregarDeuda(deuda) {
+  // ---------- Categorías ----------
+
+  // Crea una categoría. Devuelve { error: "..." } si algo está mal, o { categoria } si salió bien.
+  function agregarCategoria(nombreEscrito) {
+    const nombre = nombreEscrito.trim().replace(/\s+/g, " ");
+    if (nombre === "") return { error: "Escribí un nombre para la categoría." };
+    if (nombre.length > 20) return { error: "Usá un nombre de hasta 20 letras." };
+
+    const repetida = datos.categorias.some((c) => c.nombre.toLowerCase() === nombre.toLowerCase());
+    if (repetida) return { error: `Ya existe la categoría "${nombre}".` };
+
+    const creadas = datos.categorias.filter((c) => c.creadaPorUsuario).length;
+    const categoria = {
+      id: crearId(),
+      nombre: nombre[0].toUpperCase() + nombre.slice(1),
+      color: COLORES_EXTRA[creadas % COLORES_EXTRA.length],
+      delSistema: false,
+      creadaPorUsuario: true,
+    };
+
+    // "Deudas" (la del sistema) queda siempre al final de la lista
+    const normales = datos.categorias.filter((c) => !c.delSistema);
+    const delSistema = datos.categorias.filter((c) => c.delSistema);
+    cambiar({ ...datos, categorias: [...normales, categoria, ...delSistema] });
+    return { categoria };
+  }
+
+  function borrarCategoria(id) {
+    const categorias = datos.categorias.filter((c) => c.id !== id);
+    cambiar({ ...datos, categorias });
+  }
+
+  // ---------- Deudas y cobros ----------
+
+  function agregarDeuda(deuda) {
     const nueva = { id: crearId(), ...deuda };
     cambiar({ ...datos, deudas: [...datos.deudas, nueva] });
   }
@@ -59,7 +98,7 @@ export function DatosProvider({ children }) {
     cambiar({ ...datos, deudas, cobros });
   }
 
-    function agregarCobro(cobro) {
+  function agregarCobro(cobro) {
     const nuevo = { id: crearId(), ...cobro };
     cambiar({ ...datos, cobros: [...datos.cobros, nuevo] });
   }
@@ -72,11 +111,22 @@ export function DatosProvider({ children }) {
   // Mientras carga no mostramos nada (dura un instante)
   if (datos === null) return null;
 
-  return (
-            <DatosContext.Provider value={{ datos, agregarGasto, editarGasto, borrarGasto, guardarPresupuesto, agregarDeuda, editarDeuda, borrarDeuda, agregarCobro, borrarCobro }}>
-      {children}
-    </DatosContext.Provider>
-  );
+  const valor = {
+    datos,
+    agregarGasto,
+    editarGasto,
+    borrarGasto,
+    guardarPresupuesto,
+    agregarCategoria,
+    borrarCategoria,
+    agregarDeuda,
+    editarDeuda,
+    borrarDeuda,
+    agregarCobro,
+    borrarCobro,
+  };
+
+  return <DatosContext.Provider value={valor}>{children}</DatosContext.Provider>;
 }
 
 // Para usar la caja desde cualquier pantalla

@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import CampoMonto from "../components/CampoMonto";
 import SelectorCategoria from "../components/SelectorCategoria";
 import SelectorFecha from "../components/SelectorFecha";
+import NuevaCategoria from "../components/NuevaCategoria";
 import { useDatos } from "../context/DatosContext";
 import { colores, espacio, letra, radio } from "../constants/tema";
 import { hoy, miles, leerMonto, mesDe, fechaDelDia } from "../utils/formato";
@@ -89,6 +90,8 @@ export default function GastoScreen() {
         <>
           <Text style={styles.etiqueta}>Categoría</Text>
           <SelectorCategoria categorias={categorias} elegida={categoriaId} alElegir={setCategoriaId} />
+        <NuevaCategoria alCrear={(c) => setCategoriaId(c.id)} />
+        
         </>
       )}
 
