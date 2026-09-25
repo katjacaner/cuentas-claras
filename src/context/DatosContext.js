@@ -41,11 +41,29 @@ export function DatosProvider({ children }) {
     cambiar({ ...datos, presupuestos });
   }
 
+    function agregarDeuda(deuda) {
+    const nueva = { id: crearId(), ...deuda };
+    cambiar({ ...datos, deudas: [...datos.deudas, nueva] });
+  }
+
+  function editarDeuda(id, cambios) {
+    const deudas = datos.deudas.map((d) => (d.id === id ? { ...d, ...cambios } : d));
+    cambiar({ ...datos, deudas });
+  }
+
+  // Los pagos (que son gastos) se quedan: esa plata sí se gastó.
+  // Los cobros sí se borran junto con la deuda.
+  function borrarDeuda(id) {
+    const deudas = datos.deudas.filter((d) => d.id !== id);
+    const cobros = datos.cobros.filter((c) => c.deudaId !== id);
+    cambiar({ ...datos, deudas, cobros });
+  }
+
   // Mientras carga no mostramos nada (dura un instante)
   if (datos === null) return null;
 
   return (
-    <DatosContext.Provider value={{ datos, agregarGasto, editarGasto, borrarGasto, guardarPresupuesto }}>
+        <DatosContext.Provider value={{ datos, agregarGasto, editarGasto, borrarGasto, guardarPresupuesto, agregarDeuda, editarDeuda, borrarDeuda }}>
       {children}
     </DatosContext.Provider>
   );

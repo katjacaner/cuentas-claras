@@ -40,10 +40,11 @@ export function nombreDelMes(mes) {
   return nombre[0].toUpperCase() + nombre.slice(1) + " " + anio;
 }
 
-// "2026-09-24" -> "24 sep"
+// "2026-09-24" -> "24 sep"   |   de otro año: "10 ene 2027"
 export function fechaCorta(fecha) {
-  const [, mes, dia] = fecha.split("-");
-  return Number(dia) + " " + MESES[Number(mes) - 1].slice(0, 3);
+  const [anio, mes, dia] = fecha.split("-");
+  const texto = Number(dia) + " " + MESES[Number(mes) - 1].slice(0, 3);
+  return anio === hoy().slice(0, 4) ? texto : texto + " " + anio;
 }
 
 // "2026-09-25" y -1 -> "2026-09-24"
@@ -55,9 +56,10 @@ export function sumarDias(fecha, dias) {
   return `${d.getFullYear()}-${m}-${dd}`;
 }
 
-// "2026-09-25" -> "Hoy"  |  "Ayer"  |  "23 sep"
+// "2026-09-25" -> "Hoy"  |  "Ayer"  |  "Mañana"  |  "23 sep"
 export function etiquetaDia(fecha) {
   if (fecha === hoy()) return "Hoy";
   if (fecha === sumarDias(hoy(), -1)) return "Ayer";
+  if (fecha === sumarDias(hoy(), 1)) return "Mañana";
   return fechaCorta(fecha);
 }

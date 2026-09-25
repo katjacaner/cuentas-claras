@@ -3,9 +3,10 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { colores, espacio, radio } from "../constants/tema";
 import { hoy, sumarDias, etiquetaDia } from "../utils/formato";
 
-// Elegir la fecha día por día con flechas. No deja elegir días futuros.
-export default function SelectorFecha({ fecha, alCambiar }) {
-  const esHoy = fecha >= hoy();
+// Elegir la fecha día por día con flechas.
+// Por defecto no deja elegir días futuros (para gastos). Con permitirFuturo sí (para deudas).
+export default function SelectorFecha({ fecha, alCambiar, permitirFuturo = false }) {
+  const bloquearSiguiente = !permitirFuturo && fecha >= hoy();
 
   return (
     <View style={styles.caja}>
@@ -22,8 +23,8 @@ export default function SelectorFecha({ fecha, alCambiar }) {
 
       <Pressable
         onPress={() => alCambiar(sumarDias(fecha, 1))}
-        disabled={esHoy}
-        style={[styles.flecha, esHoy && styles.apagada]}
+        disabled={bloquearSiguiente}
+        style={[styles.flecha, bloquearSiguiente && styles.apagada]}
         hitSlop={8}
         accessibilityLabel="Día siguiente"
       >
