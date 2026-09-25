@@ -3,13 +3,24 @@ import { router } from "expo-router";
 import { colores, espacio, letra, radio } from "../constants/tema";
 import { formatearMonto } from "../utils/formato";
 
-export default function TarjetaSaldo({ presupuesto, gastado }) {
+// esMesActual: si es false, estamos mirando un mes pasado (no se puede editar el presupuesto)
+export default function TarjetaSaldo({ presupuesto, gastado, esMesActual = true }) {
   function abrirPresupuesto() {
     router.push("/presupuesto");
   }
 
-  // Todavía no hay presupuesto: invitamos a configurarlo
+  // No hay presupuesto para este mes
   if (presupuesto === 0) {
+    if (!esMesActual) {
+      return (
+        <View style={styles.tarjeta}>
+          <Text style={styles.detalle}>No tenías un presupuesto configurado en este mes.</Text>
+          <Text style={styles.detalle}>
+            Gastaste <Text style={styles.negrita}>{formatearMonto(gastado)}</Text>
+          </Text>
+        </View>
+      );
+    }
     return (
       <Pressable style={({ pressed }) => [styles.tarjeta, pressed && styles.presionado]} onPress={abrirPresupuesto}>
         <Text style={styles.detalle}>Todavía no configuraste cuánto tenés para gastar por mes.</Text>
@@ -23,9 +34,17 @@ export default function TarjetaSaldo({ presupuesto, gastado }) {
   const porcentaje = Math.round((gastado / presupuesto) * 100);
   const anchoBarra = Math.min(porcentaje, 100);
 
+  let titulo = "Te quedan";
+  if (pasado) titulo = "Te pasaste por";
+  else if (!esMesActual) titulo = "Te sobraron";
+
   return (
-    <Pressable style={({ pressed }) => [styles.tarjeta, pressed && styles.presionado]} onPress={abrirPresupuesto}>
-      <Text style={styles.etiqueta}>{pasado ? "Te pasaste por" : "Te quedan"}</Text>
+    <Pressable
+      style={({ pressed }) => [styles.tarjeta, pressed && styles.presionado]}
+      onPress={abrirPresupuesto}
+      disabled={!esMesActual}
+    >
+      <Text style={styles.etiqueta}>{titulo}</Text>
       <Text style={[styles.monto, pasado && styles.rojo]}>{formatearMonto(Math.abs(queda))}</Text>
 
       <View style={styles.barra}>
@@ -35,7 +54,7 @@ export default function TarjetaSaldo({ presupuesto, gastado }) {
       <Text style={styles.detalle}>
         Gastaste <Text style={styles.negrita}>{formatearMonto(gastado)}</Text> de {formatearMonto(presupuesto)} · {porcentaje}%
       </Text>
-      <Text style={styles.enlace}>Editar presupuesto ›</Text>
+      {esMesActual && <Text style={styles.enlace}>Editar presupuesto ›</Text>}
     </Pressable>
   );
 }

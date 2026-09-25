@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { View, ScrollView, Text, Pressable, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { colores, espacio, letra, radio } from "../../constants/tema";
-import { hoy, nombreDelMes, mesDe } from "../../utils/formato";
+import { hoy, mesDe } from "../../utils/formato";
 import { useDatos } from "../../context/DatosContext";
 import {
   presupuestoDelMes,
@@ -11,6 +12,7 @@ import {
   ordenarPorFecha,
   totalesPorCategoria,
 } from "../../logic/calculos";
+import SelectorMes from "../../components/SelectorMes";
 import TarjetaSaldo from "../../components/TarjetaSaldo";
 import GraficoCategorias from "../../components/GraficoCategorias";
 import FilaGasto from "../../components/FilaGasto";
@@ -19,7 +21,10 @@ import BotonPrincipal from "../../components/BotonPrincipal";
 export default function ResumenScreen() {
   const { datos } = useDatos();
 
-  const mes = mesDe(hoy());
+  // El mes que estás mirando. Arranca en el mes actual.
+  const [mes, setMes] = useState(mesDe(hoy()));
+  const esMesActual = mes === mesDe(hoy());
+
   const presupuesto = presupuestoDelMes(datos.presupuestos, mes);
   const gastosMes = gastosDelMes(datos.gastos, mes);
   const gastado = sumarMontos(gastosMes);
@@ -29,23 +34,23 @@ export default function ResumenScreen() {
   return (
     <View style={styles.pantalla}>
       <ScrollView contentContainerStyle={styles.contenido}>
-        <Text style={styles.mes}>{nombreDelMes(mes)}</Text>
+        <SelectorMes mes={mes} alCambiar={setMes} />
 
-        <TarjetaSaldo presupuesto={presupuesto} gastado={gastado} />
+        <TarjetaSaldo presupuesto={presupuesto} gastado={gastado} esMesActual={esMesActual} />
 
         <GraficoCategorias totales={totales} />
 
         <View style={styles.panel}>
           <View style={styles.cabecera}>
             <Text style={styles.panelTitulo}>
-              Últimos gastos <Text style={styles.cantidad}>· {gastosMes.length} este mes</Text>
+              Últimos gastos <Text style={styles.cantidad}>· {gastosMes.length} en el mes</Text>
             </Text>
             <Pressable onPress={() => router.navigate("/gastos")} hitSlop={8}>
               <Text style={styles.verTodos}>Ver todos ›</Text>
             </Pressable>
           </View>
           {ultimos.length === 0 ? (
-            <Text style={styles.vacio}>Todavía no registraste gastos este mes.</Text>
+            <Text style={styles.vacio}>No hay gastos registrados en este mes.</Text>
           ) : (
             ultimos.map((g) => (
               <FilaGasto key={g.id} gasto={g} categoria={buscarCategoria(datos.categorias, g.categoriaId)} />
@@ -54,7 +59,7 @@ export default function ResumenScreen() {
         </View>
       </ScrollView>
 
-      <BotonPrincipal texto="+ Registrar gasto" alTocar={() => router.push("/gasto")} />
+            <BotonPrincipal texto="+ Registrar gasto" alTocar={() => router.push({ pathname: "/gasto", params: { mes } })} />
     </View>
   );
 }
@@ -67,12 +72,6 @@ const styles = StyleSheet.create({
   contenido: {
     padding: espacio.l,
     gap: espacio.m,
-  },
-  mes: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: colores.texto,
-    textAlign: "center",
   },
   panel: {
     backgroundColor: colores.superficie,

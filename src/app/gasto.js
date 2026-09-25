@@ -6,10 +6,10 @@ import SelectorCategoria from "../components/SelectorCategoria";
 import SelectorFecha from "../components/SelectorFecha";
 import { useDatos } from "../context/DatosContext";
 import { colores, espacio, letra, radio } from "../constants/tema";
-import { hoy, miles, leerMonto } from "../utils/formato";
+import { hoy, miles, leerMonto, mesDe, fechaDelDia } from "../utils/formato";
 
 export default function GastoScreen() {
-  const { id } = useLocalSearchParams();
+    const { id, mes: mesElegido } = useLocalSearchParams();
   const { datos, agregarGasto, editarGasto, borrarGasto } = useDatos();
 
   // Si llegó un id, buscamos ese gasto para editarlo
@@ -25,7 +25,9 @@ export default function GastoScreen() {
 
   const [monto, setMonto] = useState(esEdicion ? miles(gasto.monto) : "");
   const [categoriaId, setCategoriaId] = useState(esEdicion ? gasto.categoriaId : categorias[0]?.id);
-  const [fecha, setFecha] = useState(esEdicion ? gasto.fecha : hoy());
+    // Si venís de un mes pasado del Resumen, la fecha arranca en el último día de ese mes
+  const fechaInicial = mesElegido && mesElegido < mesDe(hoy()) ? fechaDelDia(mesElegido, 31) : hoy();
+  const [fecha, setFecha] = useState(esEdicion ? gasto.fecha : fechaInicial);
   const [descripcion, setDescripcion] = useState(esEdicion ? gasto.descripcion : "");
   const [error, setError] = useState("");
 

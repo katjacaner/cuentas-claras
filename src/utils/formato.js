@@ -85,3 +85,27 @@ export function diasEntre(desde, hasta) {
   const [a2, m2, d2] = hasta.split("-").map(Number);
   return Math.round((Date.UTC(a2, m2 - 1, d2) - Date.UTC(a1, m1 - 1, d1)) / 86400000);
 }
+
+// "2026-08-12" -> "12/08/2026"
+export function fechaATexto(fecha) {
+  const [anio, mes, dia] = fecha.split("-");
+  return `${dia}/${mes}/${anio}`;
+}
+
+// Lo que escribe el usuario -> fecha.  "12/08" -> "2026-08-12"  |  "12/08/2025" -> "2025-08-12"
+// Si la fecha no existe (ej: 31/02), devuelve null.
+// Sin año usa el actual; si así quedaría en el futuro y no se permite, usa el año anterior.
+export function textoAFecha(texto, permitirFuturo = true) {
+  const [dia, mes, anioEscrito] = texto.split("/").map(Number);
+  let anio = anioEscrito || Number(hoy().slice(0, 4));
+  const armar = (a) => `${a}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+
+  if (!anioEscrito && !permitirFuturo && armar(anio) > hoy()) anio -= 1;
+  if (anio < 2000 || anio > 2100) return null;
+
+  // ¿La fecha existe? Para el 31/02, JavaScript arma el 3 de marzo, así que no coincide
+  const d = new Date(anio, mes - 1, dia);
+  if (d.getFullYear() !== anio || d.getMonth() !== mes - 1 || d.getDate() !== dia) return null;
+
+  return armar(anio);
+}
