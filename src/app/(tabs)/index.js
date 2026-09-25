@@ -1,17 +1,17 @@
-import { View, Text, StyleSheet, Button } from "react-native";
+import { ScrollView, View, Text, StyleSheet, Button } from "react-native";
 import { colores, espacio, letra } from "../../constants/tema";
-import { formatearMonto, hoy, nombreDelMes, mesDe } from "../../utils/formato";
+import { hoy, nombreDelMes, mesDe } from "../../utils/formato";
 import { useDatos } from "../../context/DatosContext";
 import { presupuestoDelMes, gastosDelMes, sumarMontos } from "../../logic/calculos";
+import TarjetaSaldo from "../../components/TarjetaSaldo";
 
 export default function ResumenScreen() {
-  const { datos, agregarGasto, borrarGasto, guardarPresupuesto } = useDatos();
+  const { datos, agregarGasto, borrarGasto } = useDatos();
 
   const mes = mesDe(hoy());
   const presupuesto = presupuestoDelMes(datos.presupuestos, mes);
   const gastosMes = gastosDelMes(datos.gastos, mes);
   const gastado = sumarMontos(gastosMes);
-  const queda = presupuesto - gastado;
 
   function agregarPrueba() {
     agregarGasto({ monto: 35000, categoriaId: "comida", fecha: hoy(), descripcion: "Gasto de prueba" });
@@ -23,41 +23,41 @@ export default function ResumenScreen() {
   }
 
   return (
-    <View style={styles.contenedor}>
-      <Text style={styles.etiqueta}>{nombreDelMes(mes)}</Text>
-      <Text style={styles.etiqueta}>Te quedan</Text>
-      <Text style={styles.monto}>{formatearMonto(queda)}</Text>
-      <Text style={styles.etiqueta}>
-        Gastaste {formatearMonto(gastado)} de {formatearMonto(presupuesto)}
-      </Text>
+    <ScrollView style={styles.pantalla} contentContainerStyle={styles.contenido}>
+      <Text style={styles.mes}>{nombreDelMes(mes)}</Text>
+
+      <TarjetaSaldo presupuesto={presupuesto} gastado={gastado} />
+
       <Text style={styles.etiqueta}>{gastosMes.length} gastos este mes</Text>
 
-      {/* Botones de prueba: los vamos a sacar en la Parte 5 */}
+      {/* Botones de prueba: se van en la Parte 5B */}
       <View style={styles.pruebas}>
-        <Button title="Poner presupuesto de ₲3.500.000" color={colores.acento} onPress={() => guardarPresupuesto(3500000, mes)} />
         <Button title="Agregar gasto de ₲35.000" color={colores.acento} onPress={agregarPrueba} />
         <Button title="Borrar el último gasto" color={colores.peligro} onPress={borrarUltimo} />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  contenedor: {
+  pantalla: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: espacio.s,
     backgroundColor: colores.fondo,
+  },
+  contenido: {
+    padding: espacio.l,
+    gap: espacio.m,
+  },
+  mes: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colores.texto,
+    textAlign: "center",
   },
   etiqueta: {
     fontSize: letra.normal,
     color: colores.textoSuave,
-  },
-  monto: {
-    fontSize: letra.grande,
-    fontWeight: "bold",
-    color: colores.texto,
+    textAlign: "center",
   },
   pruebas: {
     marginTop: espacio.xl,
