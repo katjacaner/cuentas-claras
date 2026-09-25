@@ -16,3 +16,13 @@ export function gastosDelMes(gastos, mes) {
 export function sumarMontos(gastos) {
   return gastos.reduce((total, g) => total + g.monto, 0);
 }
+
+// Busca una categoría por su id. Si no existe, devuelve una genérica.
+export function buscarCategoria(categorias, id) {
+  return categorias.find((c) => c.id === id) || { id, nombre: "Sin categoría", color: "#7C857F" };
+}
+
+// Ordena los gastos del más reciente al más antiguo
+export function ordenarPorFecha(gastos) {
+  return [...gastos].reverse().sort((a, b) => b.fecha.localeCompare(a.fecha));
+}

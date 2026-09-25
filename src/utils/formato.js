@@ -45,3 +45,19 @@ export function fechaCorta(fecha) {
   const [, mes, dia] = fecha.split("-");
   return Number(dia) + " " + MESES[Number(mes) - 1].slice(0, 3);
 }
+
+// "2026-09-25" y -1 -> "2026-09-24"
+export function sumarDias(fecha, dias) {
+  const [anio, mes, dia] = fecha.split("-").map(Number);
+  const d = new Date(anio, mes - 1, dia + dias);
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${dd}`;
+}
+
+// "2026-09-25" -> "Hoy"  |  "Ayer"  |  "23 sep"
+export function etiquetaDia(fecha) {
+  if (fecha === hoy()) return "Hoy";
+  if (fecha === sumarDias(hoy(), -1)) return "Ayer";
+  return fechaCorta(fecha);
+}

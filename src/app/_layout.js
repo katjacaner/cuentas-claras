@@ -18,6 +18,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="presupuesto" options={hoja} />
+          <Stack.Screen name="gasto" options={{ presentation: "modal", headerShown: false, contentStyle: { backgroundColor: colores.superficie } }} />
       </Stack>
     </DatosProvider>
   );
