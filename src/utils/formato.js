@@ -63,3 +63,25 @@ export function etiquetaDia(fecha) {
   if (fecha === sumarDias(hoy(), 1)) return "Mañana";
   return fechaCorta(fecha);
 }
+
+// "2026-09" y 1 -> "2026-10"   |   "2026-12" y 1 -> "2027-01"
+export function moverMes(mes, cantidad) {
+  const [anio, numero] = mes.split("-").map(Number);
+  const d = new Date(anio, numero - 1 + cantidad, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+// El día "dia" de un mes: ("2026-09", 27) -> "2026-09-27"
+// Si el mes es más corto (ej: 31 en febrero), usa el último día del mes.
+export function fechaDelDia(mes, dia) {
+  const [anio, numero] = mes.split("-").map(Number);
+  const ultimoDia = new Date(anio, numero, 0).getDate();
+  return `${mes}-${String(Math.min(dia, ultimoDia)).padStart(2, "0")}`;
+}
+
+// Días que faltan de una fecha a otra: ("2026-09-25", "2026-09-28") -> 3
+export function diasEntre(desde, hasta) {
+  const [a1, m1, d1] = desde.split("-").map(Number);
+  const [a2, m2, d2] = hasta.split("-").map(Number);
+  return Math.round((Date.UTC(a2, m2 - 1, d2) - Date.UTC(a1, m1 - 1, d1)) / 86400000);
+}

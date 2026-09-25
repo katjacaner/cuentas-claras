@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { useDatos } from "../../context/DatosContext";
+import { calcularDeuda } from "../../logic/deudas";
+import { sumarMontos } from "../../logic/calculos";
 import SelectorOpciones from "../../components/SelectorOpciones";
+import TarjetaDeuda from "../../components/TarjetaDeuda";
 import BotonPrincipal from "../../components/BotonPrincipal";
-import { colores, espacio, letra, radio } from "../../constants/tema";
-import { formatearMonto, fechaCorta } from "../../utils/formato";
+import { colores, espacio, letra } from "../../constants/tema";
+import { formatearMonto, hoy, mesDe } from "../../utils/formato";
 
 const TIPOS = [
   { valor: "debo", texto: "Debo" },
@@ -15,34 +18,47 @@ const TIPOS = [
 export default function DeudasScreen() {
   const { datos } = useDatos();
   const [tipo, setTipo] = useState("debo");
+  const debo = tipo === "debo";
 
-  const lista = datos.deudas.filter((d) => d.tipo === tipo);
+  // Cada deuda del tipo elegido, junto con sus cálculos
+  const calculadas = datos.deudas
+    .filter((d) => d.tipo === tipo)
+    .map((d) => ({ deuda: d, calculo: calcularDeuda(d, datos) }));
+
+  // Las que faltan pagar, de la que vence antes a la que vence después
+  const activas = calculadas
+    .filter((x) => x.calculo.estado !== "saldada")
+    .sort((a, b) => a.calculo.vence.localeCompare(b.calculo.vence));
+
+  const pendiente = sumarMontos(activas.map((x) => ({ monto: x.calculo.falta })));
+  const esteMes = sumarMontos(
+    activas
+      .filter((x) => mesDe(x.calculo.vence) <= mesDe(hoy()))
+      .map((x) => ({ monto: x.calculo.proximo }))
+  );
 
   return (
     <View style={styles.pantalla}>
       <ScrollView contentContainerStyle={styles.contenido}>
         <SelectorOpciones opciones={TIPOS} elegida={tipo} alElegir={setTipo} />
 
-        {lista.length === 0 ? (
-          <Text style={styles.vacio}>
-            {tipo === "debo" ? "No tenés deudas cargadas." : "No anotaste plata que te deban."}
-          </Text>
+        {calculadas.length === 0 ? (
+          <Text style={styles.vacio}>{debo ? "No tenés deudas cargadas." : "No anotaste plata que te deban."}</Text>
         ) : (
-          lista.map((d) => (
-            <Pressable
-              key={d.id}
-              style={({ pressed }) => [styles.tarjeta, pressed && styles.presionada]}
-              onPress={() => router.push({ pathname: "/deuda", params: { id: d.id } })}
-            >
-              <Text style={styles.nombre}>{d.nombre}</Text>
-              <Text style={styles.detalle}>
-                Total {formatearMonto(d.montoTotal)} ·{" "}
-                {d.forma === "cuotas"
-                  ? `cuotas de ${formatearMonto(d.cuota)}, vence el día ${d.diaVencimiento}`
-                  : `hasta el ${fechaCorta(d.fechaLimite)}`}
+          <>
+            <View style={styles.resumen}>
+              <Text style={styles.eyebrow}>{debo ? "Debés en total" : "Te deben en total"}</Text>
+              <Text style={styles.total}>{formatearMonto(pendiente)}</Text>
+              <Text style={styles.sub}>
+                {debo ? "A pagar este mes: " : "A cobrar este mes: "}
+                <Text style={styles.negrita}>{formatearMonto(esteMes)}</Text>
               </Text>
-            </Pressable>
-          ))
+            </View>
+
+            {activas.map((x) => (
+              <TarjetaDeuda key={x.deuda.id} deuda={x.deuda} calculo={x.calculo} />
+            ))}
+          </>
         )}
       </ScrollView>
 
@@ -69,24 +85,28 @@ const styles = StyleSheet.create({
     textAlign: "center",
     padding: espacio.xl,
   },
-  tarjeta: {
-    backgroundColor: colores.superficie,
-    borderRadius: radio.l,
-    borderWidth: 1,
-    borderColor: colores.borde,
-    padding: espacio.l,
-    gap: espacio.xs,
+  resumen: {
+    gap: 2,
+    paddingVertical: espacio.s,
   },
-  presionada: {
-    borderColor: colores.acento,
+  eyebrow: {
+    fontSize: 12,
+    fontWeight: "bold",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    color: colores.textoSuave,
   },
-  nombre: {
-    fontSize: 17,
+  total: {
+    fontSize: letra.grande,
     fontWeight: "bold",
     color: colores.texto,
   },
-  detalle: {
-    fontSize: letra.chica,
+  sub: {
+    fontSize: 14,
     color: colores.textoSuave,
+  },
+  negrita: {
+    fontWeight: "bold",
+    color: colores.texto,
   },
 });

@@ -1,8 +1,13 @@
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { colores } from "../../constants/tema";
+import { useDatos } from "../../context/DatosContext";
+import { contarUrgentes } from "../../logic/deudas";
 
 export default function TabsLayout() {
+  const { datos } = useDatos();
+  const urgentes = contarUrgentes(datos);
+
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: colores.acento }}>
       <Tabs.Screen
@@ -30,6 +35,8 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="card-outline" size={size} color={color} />
           ),
+          tabBarBadge: urgentes > 0 ? urgentes : undefined,
+          tabBarBadgeStyle: { backgroundColor: colores.peligro },
         }}
       />
     </Tabs>
