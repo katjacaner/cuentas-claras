@@ -3,9 +3,18 @@ import { router } from "expo-router";
 import { colores, espacio, letra, radio } from "../../constants/tema";
 import { hoy, nombreDelMes, mesDe } from "../../utils/formato";
 import { useDatos } from "../../context/DatosContext";
-import { presupuestoDelMes, gastosDelMes, sumarMontos, buscarCategoria, ordenarPorFecha } from "../../logic/calculos";
+import {
+  presupuestoDelMes,
+  gastosDelMes,
+  sumarMontos,
+  buscarCategoria,
+  ordenarPorFecha,
+  totalesPorCategoria,
+} from "../../logic/calculos";
 import TarjetaSaldo from "../../components/TarjetaSaldo";
+import GraficoCategorias from "../../components/GraficoCategorias";
 import FilaGasto from "../../components/FilaGasto";
+import BotonPrincipal from "../../components/BotonPrincipal";
 
 export default function ResumenScreen() {
   const { datos } = useDatos();
@@ -14,6 +23,7 @@ export default function ResumenScreen() {
   const presupuesto = presupuestoDelMes(datos.presupuestos, mes);
   const gastosMes = gastosDelMes(datos.gastos, mes);
   const gastado = sumarMontos(gastosMes);
+  const totales = totalesPorCategoria(gastosMes, datos.categorias);
   const ultimos = ordenarPorFecha(gastosMes).slice(0, 3);
 
   return (
@@ -23,10 +33,17 @@ export default function ResumenScreen() {
 
         <TarjetaSaldo presupuesto={presupuesto} gastado={gastado} />
 
+        <GraficoCategorias totales={totales} />
+
         <View style={styles.panel}>
-          <Text style={styles.panelTitulo}>
-            Últimos gastos <Text style={styles.cantidad}>· {gastosMes.length} este mes</Text>
-          </Text>
+          <View style={styles.cabecera}>
+            <Text style={styles.panelTitulo}>
+              Últimos gastos <Text style={styles.cantidad}>· {gastosMes.length} este mes</Text>
+            </Text>
+            <Pressable onPress={() => router.navigate("/gastos")} hitSlop={8}>
+              <Text style={styles.verTodos}>Ver todos ›</Text>
+            </Pressable>
+          </View>
           {ultimos.length === 0 ? (
             <Text style={styles.vacio}>Todavía no registraste gastos este mes.</Text>
           ) : (
@@ -37,12 +54,7 @@ export default function ResumenScreen() {
         </View>
       </ScrollView>
 
-      <Pressable
-        style={({ pressed }) => [styles.botonRegistrar, pressed && styles.presionado]}
-        onPress={() => router.push("/gasto")}
-      >
-        <Text style={styles.botonTexto}>+ Registrar gasto</Text>
-      </Pressable>
+      <BotonPrincipal texto="+ Registrar gasto" alTocar={() => router.push("/gasto")} />
     </View>
   );
 }
@@ -69,36 +81,31 @@ const styles = StyleSheet.create({
     borderColor: colores.borde,
     overflow: "hidden",
   },
+  cabecera: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 14,
+  },
   panelTitulo: {
     fontSize: 16,
     fontWeight: "bold",
     color: colores.texto,
-    padding: 14,
   },
   cantidad: {
     fontSize: letra.chica,
     fontWeight: "normal",
     color: colores.textoSuave,
   },
+  verTodos: {
+    fontSize: letra.chica,
+    fontWeight: "bold",
+    color: colores.acento,
+  },
   vacio: {
     fontSize: letra.normal,
     color: colores.textoSuave,
     paddingHorizontal: 14,
     paddingBottom: 14,
-  },
-  botonRegistrar: {
-    backgroundColor: colores.acento,
-    borderRadius: radio.m,
-    paddingVertical: 16,
-    alignItems: "center",
-    margin: espacio.l,
-  },
-  presionado: {
-    opacity: 0.85,
-  },
-  botonTexto: {
-    color: colores.sobreAcento,
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });

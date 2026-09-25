@@ -4,7 +4,7 @@ import { colores, espacio } from "../constants/tema";
 import { formatearMonto, etiquetaDia } from "../utils/formato";
 
 // Una fila de la lista de gastos. Al tocarla se abre para editarla.
-export default function FilaGasto({ gasto, categoria }) {
+export default function FilaGasto({ gasto, categoria, mostrarFecha = true }) {
   function abrir() {
     router.push({ pathname: "/gasto", params: { id: gasto.id } });
   }
@@ -17,7 +17,7 @@ export default function FilaGasto({ gasto, categoria }) {
           {gasto.descripcion || categoria.nombre}
         </Text>
         <Text style={styles.detalle}>
-          {categoria.nombre} · {etiquetaDia(gasto.fecha)}
+          {mostrarFecha ? `${categoria.nombre} · ${etiquetaDia(gasto.fecha)}` : categoria.nombre}
         </Text>
       </View>
       <Text style={styles.monto}>{formatearMonto(gasto.monto)}</Text>
