@@ -1,0 +1,36 @@
+import { Tabs } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
+
+export default function TabsLayout() {
+  return (
+    <Tabs screenOptions={{ tabBarActiveTintColor: "#25614F" }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Resumen",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="pie-chart-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="gastos"
+        options={{
+          title: "Gastos",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="list-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="deudas"
+        options={{
+          title: "Deudas",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="card-outline" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
+  );
+}
