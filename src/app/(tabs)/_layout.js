@@ -56,7 +56,7 @@ export default function TabsLayout() {
             <Ionicons name="card-outline" size={size} color={color} />
           ),
           tabBarBadge: urgentes > 0 ? urgentes : undefined,
-          tabBarBadgeStyle: { backgroundColor: colores.peligro },
+          tabBarBadgeStyle: { backgroundColor: colores.peligro, color: colores.sobrePeligro },
         }}
       />
     </Tabs>

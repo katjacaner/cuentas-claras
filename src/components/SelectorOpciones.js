@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   avisoTexto: {
-    color: "#FFFFFF",
+        color: colores.sobrePeligro,
     fontSize: 11,
     fontWeight: "bold",
   },
