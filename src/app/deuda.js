@@ -5,7 +5,7 @@ import CampoMonto from "../components/CampoMonto";
 import SelectorOpciones from "../components/SelectorOpciones";
 import SelectorFecha from "../components/SelectorFecha";
 import { useDatos } from "../context/DatosContext";
-import { colores, espacio, letra, radio } from "../constants/tema";
+import { colores, espacio, letra, radio, fuentes } from "../constants/tema";
 import { hoy, miles, leerMonto, sumarDias, formatearMonto } from "../utils/formato";
 
 const TIPOS = [
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: letra.titulo,
-    fontWeight: "bold",
+    fontFamily: fuentes.titulo,
     color: colores.texto,
     marginBottom: espacio.s,
   },

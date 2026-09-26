@@ -1,6 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { router } from "expo-router";
-import { colores, espacio, letra, radio } from "../constants/tema";
+import { colores, espacio, letra, radio, fuentes } from "../constants/tema";
 import { formatearMonto } from "../utils/formato";
 
 // esMesActual: si es false, estamos mirando un mes pasado (no se puede editar el presupuesto)
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   monto: {
     fontSize: letra.grande,
-    fontWeight: "bold",
+    fontFamily: fuentes.numero,
     color: colores.texto,
   },
   rojo: {

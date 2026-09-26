@@ -5,7 +5,7 @@ import CampoMonto from "../components/CampoMonto";
 import SelectorFecha from "../components/SelectorFecha";
 import { useDatos } from "../context/DatosContext";
 import { calcularDeuda } from "../logic/deudas";
-import { colores, espacio, letra, radio } from "../constants/tema";
+import { colores, espacio, letra, radio, fuentes } from "../constants/tema";
 import { hoy, miles, leerMonto, formatearMonto } from "../utils/formato";
 
 export default function PagoScreen() {
@@ -103,9 +103,9 @@ const styles = StyleSheet.create({
     gap: espacio.s,
     backgroundColor: colores.superficie,
   },
-  titulo: {
+    titulo: {
     fontSize: letra.titulo,
-    fontWeight: "bold",
+    fontFamily: fuentes.titulo,
     color: colores.texto,
   },
   etiqueta: {

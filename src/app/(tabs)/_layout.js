@@ -1,7 +1,7 @@
 import { Pressable } from "react-native";
 import { Tabs, router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { colores } from "../../constants/tema";
+import { colores, fuentes } from "../../constants/tema";
 import { useDatos } from "../../context/DatosContext";
 import { contarUrgentes } from "../../logic/deudas";
 
@@ -27,6 +27,7 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: colores.acento,
+        headerTitleStyle: { fontFamily: fuentes.titulo },
         headerRight: () => <BotonAjustes />,
       }}
     >

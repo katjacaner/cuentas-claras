@@ -49,3 +49,9 @@ export const radio = { s: 10, m: 14, l: 18 };
 
 // Tamaños de letra
 export const letra = { chica: 13, normal: 15, subtitulo: 17, titulo: 22, grande: 40 };
+
+// Tipografías (se cargan en app/_layout.js). Los textos comunes usan la letra del celular.
+export const fuentes = {
+  titulo: "BricolageGrotesque_700Bold",      // títulos
+  numero: "BricolageGrotesque_800ExtraBold", // números grandes (plata)
+};

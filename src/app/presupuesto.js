@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import CampoMonto from "../components/CampoMonto";
 import { useDatos } from "../context/DatosContext";
 import { presupuestoDelMes } from "../logic/calculos";
-import { colores, espacio, letra, radio } from "../constants/tema";
+import { colores, espacio, letra, radio, fuentes } from "../constants/tema";
 import { hoy, mesDe, miles, leerMonto } from "../utils/formato";
 
 export default function PresupuestoScreen() {
@@ -51,9 +51,9 @@ const styles = StyleSheet.create({
     gap: espacio.m,
     backgroundColor: colores.superficie,
   },
-  titulo: {
+    titulo: {
     fontSize: letra.titulo,
-    fontWeight: "bold",
+    fontFamily: fuentes.titulo,
     color: colores.texto,
   },
   etiqueta: {

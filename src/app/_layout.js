@@ -1,5 +1,10 @@
 import { Stack, ThemeProvider, DarkTheme, DefaultTheme } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import {
+  useFonts,
+  BricolageGrotesque_700Bold,
+  BricolageGrotesque_800ExtraBold,
+} from "@expo-google-fonts/bricolage-grotesque";
 import { DatosProvider } from "../context/DatosContext";
 import { colores, esOscuro } from "../constants/tema";
 
@@ -36,6 +41,16 @@ const modal = {
 };
 
 export default function RootLayout() {
+  // Cargamos las tipografías del diseño antes de mostrar la app
+  const [fuentesListas, errorFuentes] = useFonts({
+    BricolageGrotesque_700Bold,
+    BricolageGrotesque_800ExtraBold,
+  });
+
+  // Mientras cargan no mostramos nada (dura un instante).
+  // Si fallaran, seguimos igual con la letra del celular.
+  if (!fuentesListas && !errorFuentes) return null;
+
   return (
     <ThemeProvider value={temaNavegacion}>
       <DatosProvider>

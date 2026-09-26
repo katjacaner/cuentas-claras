@@ -1,6 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { colores, espacio, letra } from "../constants/tema";
+import { colores, espacio, letra, fuentes } from "../constants/tema";
 import { hoy, mesDe, moverMes, nombreDelMes } from "../utils/formato";
 
 // ‹ Septiembre 2026 ›   No deja pasar del mes actual.
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   texto: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: fuentes.titulo,
     color: colores.texto,
   },
   volver: {

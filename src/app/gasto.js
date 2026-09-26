@@ -6,7 +6,7 @@ import SelectorCategoria from "../components/SelectorCategoria";
 import SelectorFecha from "../components/SelectorFecha";
 import NuevaCategoria from "../components/NuevaCategoria";
 import { useDatos } from "../context/DatosContext";
-import { colores, espacio, letra, radio } from "../constants/tema";
+import { colores, espacio, letra, radio, fuentes } from "../constants/tema";
 import { hoy, miles, leerMonto, mesDe, fechaDelDia } from "../utils/formato";
 
 export default function GastoScreen() {
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: letra.titulo,
-    fontWeight: "bold",
+    fontFamily: fuentes.titulo,
     color: colores.texto,
     marginBottom: espacio.s,
   },

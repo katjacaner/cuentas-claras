@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import { useDatos } from "../context/DatosContext";
 import { presupuestoDelMes } from "../logic/calculos";
 import NuevaCategoria from "../components/NuevaCategoria";
-import { colores, espacio, letra, radio } from "../constants/tema";
+import { colores, espacio, letra, radio, fuentes } from "../constants/tema";
 import { formatearMonto, hoy, mesDe } from "../utils/formato";
 
 export default function AjustesScreen() {
@@ -90,9 +90,9 @@ const styles = StyleSheet.create({
     padding: espacio.xl,
     gap: espacio.l,
   },
-  titulo: {
+    titulo: {
     fontSize: letra.titulo,
-    fontWeight: "bold",
+    fontFamily: fuentes.titulo,
     color: colores.texto,
   },
   panel: {

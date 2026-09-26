@@ -8,7 +8,7 @@ import { sumarMontos } from "../../logic/calculos";
 import SelectorOpciones from "../../components/SelectorOpciones";
 import TarjetaDeuda from "../../components/TarjetaDeuda";
 import BotonPrincipal from "../../components/BotonPrincipal";
-import { colores, espacio, letra } from "../../constants/tema";
+import { colores, espacio, letra, fuentes } from "../../constants/tema";
 import { formatearMonto, hoy, mesDe } from "../../utils/formato";
 
 export default function DeudasScreen() {
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   total: {
     fontSize: letra.grande,
-    fontWeight: "bold",
+    fontFamily: fuentes.numero,
     color: colores.texto,
   },
   sub: {

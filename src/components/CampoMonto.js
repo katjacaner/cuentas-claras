@@ -1,5 +1,5 @@
 import { View, Text, TextInput, StyleSheet } from "react-native";
-import { colores, espacio, radio } from "../constants/tema";
+import { colores, espacio, radio, fuentes } from "../constants/tema";
 import { miles, leerMonto } from "../utils/formato";
 
 // Campo para escribir plata: muestra "₲" y agrega los puntos de miles mientras escribís
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 30,
-    fontWeight: "bold",
+    fontFamily: fuentes.numero,
     color: colores.texto,
     paddingVertical: espacio.xs,
   },
