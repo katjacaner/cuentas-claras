@@ -1,3 +1,4 @@
+import { Platform, View, StyleSheet } from "react-native";
 import { Stack, ThemeProvider, DarkTheme, DefaultTheme } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -7,6 +8,9 @@ import {
 } from "@expo-google-fonts/bricolage-grotesque";
 import { DatosProvider } from "../context/DatosContext";
 import { colores, esOscuro } from "../constants/tema";
+
+// ¿La app está corriendo en un navegador?
+const esWeb = Platform.OS === "web";
 
 // Colores para la barra de pestañas y los encabezados (esos los dibuja la navegación, no nosotros)
 const base = esOscuro ? DarkTheme : DefaultTheme;
@@ -55,15 +59,38 @@ export default function RootLayout() {
     <ThemeProvider value={temaNavegacion}>
       <DatosProvider>
         <StatusBar style="auto" />
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="presupuesto" options={hoja} />
-          <Stack.Screen name="gasto" options={modal} />
-          <Stack.Screen name="deuda" options={modal} />
-          <Stack.Screen name="pago" options={hoja} />
-          <Stack.Screen name="ajustes" options={modal} />
-        </Stack>
+        {/* En la compu, la app se ve como una columna de celular centrada */}
+        <View style={styles.fondo}>
+          <View style={[styles.columna, esWeb && styles.columnaWeb]}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="presupuesto" options={hoja} />
+              <Stack.Screen name="gasto" options={modal} />
+              <Stack.Screen name="deuda" options={modal} />
+              <Stack.Screen name="pago" options={hoja} />
+              <Stack.Screen name="ajustes" options={modal} />
+            </Stack>
+          </View>
+        </View>
       </DatosProvider>
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  fondo: {
+    flex: 1,
+    backgroundColor: colores.fondo,
+  },
+  columna: {
+    flex: 1,
+    width: "100%",
+  },
+  columnaWeb: {
+    maxWidth: 520,
+    alignSelf: "center",
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: colores.borde,
+  },
+});
