@@ -7,6 +7,7 @@ import {
   BricolageGrotesque_800ExtraBold,
 } from "@expo-google-fonts/bricolage-grotesque";
 import { DatosProvider } from "../context/DatosContext";
+import { AvisoProvider } from "../context/AvisoContext";
 import { colores, esOscuro } from "../constants/tema";
 
 // ¿La app está corriendo en un navegador?
@@ -62,14 +63,16 @@ export default function RootLayout() {
         {/* En la compu, la app se ve como una columna de celular centrada */}
         <View style={styles.fondo}>
           <View style={[styles.columna, esWeb && styles.columnaWeb]}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="presupuesto" options={hoja} />
-              <Stack.Screen name="gasto" options={modal} />
-              <Stack.Screen name="deuda" options={modal} />
-              <Stack.Screen name="pago" options={hoja} />
-              <Stack.Screen name="ajustes" options={modal} />
-            </Stack>
+            <AvisoProvider>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="presupuesto" options={hoja} />
+                <Stack.Screen name="gasto" options={modal} />
+                <Stack.Screen name="deuda" options={modal} />
+                <Stack.Screen name="pago" options={hoja} />
+                <Stack.Screen name="ajustes" options={modal} />
+              </Stack>
+            </AvisoProvider>
           </View>
         </View>
       </DatosProvider>

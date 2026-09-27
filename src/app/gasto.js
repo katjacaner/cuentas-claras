@@ -7,12 +7,14 @@ import SelectorFecha from "../components/SelectorFecha";
 import NuevaCategoria from "../components/NuevaCategoria";
 import { useDatos } from "../context/DatosContext";
 import { confirmar } from "../utils/dialogos";
+import { useAviso } from "../context/AvisoContext";
 import { colores, espacio, letra, radio, fuentes } from "../constants/tema";
 import { hoy, miles, leerMonto, mesDe, fechaDelDia } from "../utils/formato";
 
 export default function GastoScreen() {
     const { id, mes: mesElegido } = useLocalSearchParams();
   const { datos, agregarGasto, editarGasto, borrarGasto } = useDatos();
+    const mostrarAviso = useAviso();
 
   // Si llegó un id, buscamos ese gasto para editarlo
   const gasto = datos.gastos.find((g) => g.id === id);
@@ -52,12 +54,19 @@ export default function GastoScreen() {
     } else {
       agregarGasto(datosDelGasto);
     }
+    if (esEdicion) {
+      editarGasto(gasto.id, datosDelGasto);
+    } else {
+      agregarGasto(datosDelGasto);
+    }
+    mostrarAviso(esEdicion ? "Cambios guardados" : "Gasto registrado");
     router.back();
   }
 
-    function confirmarBorrado() {
+      function confirmarBorrado() {
     confirmar(`¿Borrar este ${palabra}?`, "No se puede deshacer.", "Borrar", () => {
       borrarGasto(gasto.id);
+      mostrarAviso(esPago ? "Pago borrado" : "Gasto borrado");
       router.back();
     });
   }
