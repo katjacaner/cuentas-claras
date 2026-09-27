@@ -5,6 +5,7 @@ import { useDatos } from "../context/DatosContext";
 import { colores, espacio, letra, radio } from "../constants/tema";
 import { formatearMonto, fechaCorta } from "../utils/formato";
 import { textoEstado } from "../logic/deudas";
+import { confirmar } from "../utils/dialogos";
 
 // Colores de la etiqueta según el estado
 const TONOS = {
@@ -39,15 +40,14 @@ export default function TarjetaDeuda({ deuda, calculo }) {
     router.push({ pathname: "/pago", params: { deudaId: deuda.id } });
   }
 
-  function tocarMovimiento(m) {
+    function tocarMovimiento(m) {
     if (debo) {
       // Los pagos son gastos: se editan o borran en la hoja del gasto
       router.push({ pathname: "/gasto", params: { id: m.id } });
     } else {
-      Alert.alert("¿Borrar este cobro?", `${formatearMonto(m.monto)} del ${fechaCorta(m.fecha)}`, [
-        { text: "Cancelar", style: "cancel" },
-        { text: "Borrar", style: "destructive", onPress: () => borrarCobro(m.id) },
-      ]);
+      confirmar("¿Borrar este cobro?", `${formatearMonto(m.monto)} del ${fechaCorta(m.fecha)}`, "Borrar", () =>
+        borrarCobro(m.id)
+      );
     }
   }
 

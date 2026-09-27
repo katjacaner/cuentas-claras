@@ -7,6 +7,7 @@ import SelectorFecha from "../components/SelectorFecha";
 import { useDatos } from "../context/DatosContext";
 import { colores, espacio, letra, radio, fuentes } from "../constants/tema";
 import { hoy, miles, leerMonto, sumarDias, formatearMonto } from "../utils/formato";
+import { confirmar } from "../utils/dialogos";
 
 const TIPOS = [
   { valor: "debo", texto: "Yo debo" },
@@ -101,19 +102,12 @@ export default function DeudaScreen() {
     router.back();
   }
 
-  function confirmarBorrado() {
+    function confirmarBorrado() {
     const aviso = debo ? "Los pagos que registraste quedan en tus gastos." : "También se borran sus cobros.";
-    Alert.alert("¿Borrar esta deuda?", aviso, [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Borrar",
-        style: "destructive",
-        onPress: () => {
-          borrarDeuda(deuda.id);
-          router.back();
-        },
-      },
-    ]);
+    confirmar("¿Borrar esta deuda?", aviso, "Borrar", () => {
+      borrarDeuda(deuda.id);
+      router.back();
+    });
   }
 
   return (

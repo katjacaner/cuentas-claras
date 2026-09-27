@@ -6,6 +6,7 @@ import SelectorCategoria from "../components/SelectorCategoria";
 import SelectorFecha from "../components/SelectorFecha";
 import NuevaCategoria from "../components/NuevaCategoria";
 import { useDatos } from "../context/DatosContext";
+import { confirmar } from "../utils/dialogos";
 import { colores, espacio, letra, radio, fuentes } from "../constants/tema";
 import { hoy, miles, leerMonto, mesDe, fechaDelDia } from "../utils/formato";
 
@@ -54,18 +55,11 @@ export default function GastoScreen() {
     router.back();
   }
 
-  function confirmarBorrado() {
-    Alert.alert(`¿Borrar este ${palabra}?`, "No se puede deshacer.", [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Borrar",
-        style: "destructive",
-        onPress: () => {
-          borrarGasto(gasto.id);
-          router.back();
-        },
-      },
-    ]);
+    function confirmarBorrado() {
+    confirmar(`¿Borrar este ${palabra}?`, "No se puede deshacer.", "Borrar", () => {
+      borrarGasto(gasto.id);
+      router.back();
+    });
   }
 
   return (

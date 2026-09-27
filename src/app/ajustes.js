@@ -5,6 +5,7 @@ import { presupuestoDelMes } from "../logic/calculos";
 import NuevaCategoria from "../components/NuevaCategoria";
 import { colores, espacio, letra, radio, fuentes } from "../constants/tema";
 import { formatearMonto, hoy, mesDe } from "../utils/formato";
+import { confirmar, avisar } from "../utils/dialogos";
 
 export default function AjustesScreen() {
   const { datos, borrarCategoria } = useDatos();
@@ -16,11 +17,11 @@ export default function AjustesScreen() {
     return datos.gastos.filter((g) => g.categoriaId === id).length;
   }
 
-  function quitar(categoria) {
+    function quitar(categoria) {
     const cantidad = cantidadDeGastos(categoria.id);
 
     if (cantidad > 0) {
-      Alert.alert(
+      avisar(
         "No se puede quitar",
         `"${categoria.nombre}" tiene ${cantidad} ${cantidad === 1 ? "gasto" : "gastos"}. ` +
           `Para quitarla, primero cambiá ${cantidad === 1 ? "ese gasto" : "esos gastos"} a otra categoría.`
@@ -28,10 +29,9 @@ export default function AjustesScreen() {
       return;
     }
 
-    Alert.alert(`¿Quitar "${categoria.nombre}"?`, "Podés volver a crearla cuando quieras.", [
-      { text: "Cancelar", style: "cancel" },
-      { text: "Quitar", style: "destructive", onPress: () => borrarCategoria(categoria.id) },
-    ]);
+    confirmar(`¿Quitar "${categoria.nombre}"?`, "Podés volver a crearla cuando quieras.", "Quitar", () =>
+      borrarCategoria(categoria.id)
+    );
   }
 
   return (
